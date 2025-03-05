@@ -1,4 +1,6 @@
 #GestureCollection.py
+
+#GestureCollection.py
 import csv
 import cv2
 import mediapipe as mp
@@ -31,7 +33,7 @@ class GestureCollector:
         self.frame_counter = 0  # Track frames during recording
 
     def initialize_csv(self):
-        self.csv_file = open(f'gesture_data.csv', mode='a', newline='')
+        self.csv_file = open(f'gesture_data1.csv', mode='a', newline='')
         self.writer = csv.writer(self.csv_file)
         if self.csv_file.tell() == 0:
             header = ['label', 'timestamp'] + \
@@ -121,6 +123,22 @@ class GestureCollector:
             img, landmarks, self.mp_hands.HAND_CONNECTIONS)
 
     def draw_ui(self, img):
+        height, width, _ = img.shape
+
+        # Grid settings (3x3 grid)
+        num_lines = 2  # Number of lines per axis (creating 3 sections)
+
+        # Draw vertical lines
+        for i in range(1, num_lines + 1):
+            x = int(i * width / (num_lines + 1))
+            cv2.line(img, (x, 0), (x, height), (100, 100, 100), 1)
+
+        # Draw horizontal lines
+        for i in range(1, num_lines + 1):
+            y = int(i * height / (num_lines + 1))
+            cv2.line(img, (0, y), (width, y), (100, 100, 100), 1)
+
+        # Draw status text
         status_text = {
             "WAITING": "Press 's' to start recording",
             "GO": "Get Ready! Perform the Gesture NOW!",
