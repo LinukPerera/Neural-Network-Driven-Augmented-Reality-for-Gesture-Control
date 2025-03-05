@@ -12,9 +12,10 @@ The project consists of several Python scripts that work together to:
 
 1. **Collect gesture data** using a camera.
 2. **Augment** the collected data to increase the dataset's size and diversity.
-3. **Preprocess** the data for training, including normalizing and creating sequences.
-4. **Train an LSTM model** for gesture recognition.
-5. **Evaluate the model** and visualize the results, including a classification report and confusion matrix.
+3. **Shuffle** the now Augmented data.
+4. **Preprocess** the data for training, including normalizing and creating sequences.
+5. **Train an LSTM model** for gesture recognition.
+6. **Evaluate the model** and visualize the results, including a classification report and confusion matrix.
 
 The dataset is collected at 15 frames per sample, with 100 samples per gesture. Data augmentation multiplies the dataset by 25 times by applying different transformations (shifting, scaling, etc.).
 
@@ -31,19 +32,26 @@ The project contains the following scripts:
 2. **`DataAugmentation.py`**: 
     - Increases the dataset size by applying augmentation techniques.
     - Uses shifting (top left, top middle, top right, left middle, right middle, bottom left and right) and scaling for Z-axis transformation.
+  
+3. **`DataShuffle.py`**: 
+    - Shuffles each data sample, (Each sample has 15 Frames)
+    - Shuffled data reduces the risk of overfitting
 
-3. **`DataPreprocessor.py`**: 
+5. **`DataPreprocessor.py`**: 
     - Loads and preprocesses the collected and augmented gesture data.
     - Normalizes the landmarks, creates sequences for gesture frames, encodes labels, and splits the data into training, validation, and test sets.
 
-4. **`ModelEvaluation.py`**: 
+6. **`ModelEvaluation.py`**: 
     - Loads the trained LSTM model and evaluates its performance.
     - Generates a classification report and confusion matrix.
     - Visualizes the confusion matrix using a heatmap.
 
-5. **`LSTMGestureClassificationModel.py`**: 
+7. **`LSTMGestureClassificationModel.py`**: 
     - Defines and trains the LSTM model for gesture recognition.
     - Includes model architecture, loss function, optimizer, and training steps.
+  
+8.  **`GestureRecognition.py`**
+    - Apon running all prerequisite scripts, (1 through 7) a .h5 file will be created along side a csv file thats used for determining the gesture classes that the model can recognize
   
 ## Installation
 
@@ -51,7 +59,7 @@ The project contains the following scripts:
 
 To run the scripts in this project, you need to have the following dependencies installed:
 
-- Python 3.6+
+- Python 3.6+ (Im using 3.9 for optimum use with open cv)
 - OpenCV
 - MediaPipe
 - NumPy
@@ -60,12 +68,6 @@ To run the scripts in this project, you need to have the following dependencies 
 - Matplotlib
 - Seaborn
 - TensorFlow (for model training and evaluation)
-
-You can install the required packages using `pip`:
-
-```bash
-pip install opencv-python mediapipe numpy pandas scikit-learn matplotlib seaborn tensorflow
-```
 
 ## Usage
 
@@ -91,7 +93,16 @@ python DataAugmentation.py
 
 This will generate augmented versions of the dataset and save them to new files.
 
-### 3. Data Preprocessing
+### 3. Data Shufflling
+
+Run **`DataShuffle.py`**, this step is optional, but will help in training to reduce chances of overfit.
+
+```bash
+python DataShuffle.py
+```
+This will shuffle the samples in your csv file
+
+### 4. Data Preprocessing
 
 Run **`DataPreprocessor.py`** to preprocess the collected and augmented data. This step normalizes the data, creates sequences, and splits it into training, validation, and test sets.
 
@@ -137,9 +148,11 @@ This will generate:
 .
 ├── GestureCollection.py              # Script to collect gesture data
 ├── DataAugmentation.py               # Script for data augmentation
+├── DataShuffle.py                    # Script for data shufflling
 ├── DataPreprocessor.py               # Script to preprocess the data
 ├── ModelEvaluation.py                # Script to evaluate the model
 ├── LSTMGestureClassificationModel.py # Script to define and train the LSTM model
+├── GestureRecognition.py               # Script for that recognizes live gestures
 ├── augmented_gesture_data.csv        # Example of collected and augmented data
 ├── gesture_lstm_model.h5            # Trained LSTM model (after training)
 ├── label_encoder.npy                # Label encoder (for evaluation)
