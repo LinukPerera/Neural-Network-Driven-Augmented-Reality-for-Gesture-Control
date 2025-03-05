@@ -3,91 +3,102 @@ import csv
 import numpy as np
 from sklearn.model_selection import train_test_split
 from sklearn.preprocessing import LabelEncoder, MinMaxScaler
-# In DataPreprocessor.py, add this at the end of the preprocess method:
-
 
 class GestureDataPreprocessor:
-    def __init__(self, input_csv, sequence_length=15, test_size=0.2, val_size=0.1):
-        self.input_csv = input_csv
-        self.sequence_length = sequence_length  # Number of frames per sequence (set to 15)
+    def __init__(self, train_csv, val_test_csv, test_size=0.5):
+        """
+        train_csv: CSV file for training data.
+        val_test_csv: CSV file for validation & testing data.
+        test_size: Percentage of validation-test split (default 50%).
+        """
+        self.train_csv = train_csv
+        self.val_test_csv = val_test_csv
         self.test_size = test_size
-        self.val_size = val_size
 
-    def load_data(self):
-        """Load data from CSV file."""
-        labels = []
-        sequences = []
+    def load_data(self, csv_file):
+        """Loads gesture sequences grouped by sequence_id from a given CSV file."""
+        sequences = {}
+        labels = {}
 
-        with open(self.input_csv, 'r') as file:
+        with open(csv_file, 'r') as file:
             reader = csv.reader(file)
-            header = next(reader)  # Skip header
+            next(reader)  # Skip header
+
             for row in reader:
-                # Check if the row has the correct number of columns
-                if len(row) != 65:  # 1 (label) + 1 (timestamp) + 63 (landmarks)
-                    print(f"Skipping row with incorrect length: {len(row)}")
+                if len(row) < 67:  # Ensure correct row length
                     continue
 
-                label = row[0]
-                landmarks = list(map(float, row[2:]))  # Skip timestamp
-                sequences.append(landmarks)
-                labels.append(label)
+                label = row[0]  
+                sequence_id = row[1]  
+                try:
+                    frame_index = int(float(row[2]))  
+                except ValueError:
+                    continue
 
-        # Convert to numpy arrays
-        sequences = np.array(sequences)
-        labels = np.array(labels)
+                try:
+                    landmarks = list(map(float, row[4:]))  
+                except ValueError:
+                    continue
 
-        # Check shapes
-        print(f"Sequences shape: {sequences.shape}")
-        print(f"Labels shape: {labels.shape}")
+                if sequence_id not in sequences:
+                    sequences[sequence_id] = []
+                    labels[sequence_id] = label
 
-        return sequences, labels
+                sequences[sequence_id].append((frame_index, landmarks))
+
+        sorted_sequences = []
+        sorted_labels = []
+        for seq_id, frames in sequences.items():
+            frames.sort(key=lambda x: x[0])  
+            sorted_sequences.append(np.array([frame[1] for frame in frames]))  
+            sorted_labels.append(labels[seq_id])
+
+        return np.array(sorted_sequences), np.array(sorted_labels)
 
     def normalize_data(self, sequences):
         """Normalize landmark coordinates to [0, 1] range."""
         scaler = MinMaxScaler()
-        sequences_normalized = scaler.fit_transform(sequences)
-        return sequences_normalized
+        sequences_reshaped = sequences.reshape(sequences.shape[0], -1)
+        sequences_normalized = scaler.fit_transform(sequences_reshaped)
+        return sequences_normalized.reshape(sequences.shape)  
 
-    def create_sequences(self, sequences, labels):
-        """Create sequences of frames for dynamic gestures."""
-        X, y = [], []
-        for i in range(len(sequences) - self.sequence_length):
-            sequence = sequences[i:i + self.sequence_length]
-            label = labels[i + self.sequence_length - 1]  # Use the last label in the sequence
-            X.append(sequence)
-            y.append(label)
-        return np.array(X), np.array(y)
-
-    def encode_labels(self, labels):
-        """Encode string labels into integers."""
+    def encode_labels(self, train_labels, val_test_labels):
+        """Ensures label encoding is consistent across both datasets."""
         label_encoder = LabelEncoder()
-        labels_encoded = label_encoder.fit_transform(labels)
-        return labels_encoded, label_encoder
+        all_labels = np.concatenate((train_labels, val_test_labels))
+        label_encoder.fit(all_labels)  # Fit on both datasets to ensure consistent encoding
 
-    def split_data(self, X, y):
-        """Split data into training, validation, and testing sets."""
-        X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=self.test_size, random_state=42)
-        X_train, X_val, y_train, y_val = train_test_split(X_train, y_train, test_size=self.val_size, random_state=42)
-        return X_train, X_val, X_test, y_train, y_val, y_test
+        return (
+            label_encoder.transform(train_labels),
+            label_encoder.transform(val_test_labels),
+            label_encoder
+        )
+
+    def split_val_test(self, X, y):
+        """Splits validation & test data while maintaining label distribution."""
+        X_val, X_test, y_val, y_test = train_test_split(
+            X, y, test_size=self.test_size, random_state=42, stratify=y
+        )
+        return X_val, X_test, y_val, y_test
 
     def preprocess(self):
-        """Run the entire preprocessing pipeline."""
-        # Step 1: Load data
-        sequences, labels = self.load_data()
+        """Full preprocessing pipeline."""
+        # Load training data
+        X_train, y_train = self.load_data(self.train_csv)
 
-        # Step 2: Normalize data
-        sequences_normalized = self.normalize_data(sequences)
+        # Load validation + testing data
+        X_val_test, y_val_test = self.load_data(self.val_test_csv)
 
-        # Step 3: Create sequences
-        X, y = self.create_sequences(sequences_normalized, labels)
+        # Normalize data
+        X_train = self.normalize_data(X_train)
+        X_val_test = self.normalize_data(X_val_test)
 
-        # Step 4: Encode labels
-        y_encoded, label_encoder = self.encode_labels(y)
+        # Encode labels
+        y_train, y_val_test, label_encoder = self.encode_labels(y_train, y_val_test)
 
-        # Step 5: Split data
-        X_train, X_val, X_test, y_train, y_val, y_test = self.split_data(X, y_encoded)
+        # Split validation and test sets (Taken from the second file to further reduce Overfit)
+        X_val, X_test, y_val, y_test = self.split_val_test(X_val_test, y_val_test)
 
-        # Return preprocessed data
         return {
             'X_train': X_train,
             'X_val': X_val,
@@ -98,12 +109,16 @@ class GestureDataPreprocessor:
             'label_encoder': label_encoder
         }
 
-# Example usage
+
 if __name__ == "__main__":
-    preprocessor = GestureDataPreprocessor(input_csv='augmented_gesture_data.csv', sequence_length=15)
+    preprocessor = GestureDataPreprocessor(
+        train_csv='shuffeled.csv', 
+        val_test_csv='shuffeled1.csv'
+    )
+    
     preprocessed_data = preprocessor.preprocess()
 
-    # Save preprocessed data to files
+    # Save preprocessed data
     np.save('X_train.npy', preprocessed_data['X_train'])
     np.save('X_val.npy', preprocessed_data['X_val'])
     np.save('X_test.npy', preprocessed_data['X_test'])
