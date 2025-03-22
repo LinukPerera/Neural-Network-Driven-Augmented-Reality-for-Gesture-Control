@@ -2,13 +2,20 @@
 Github Repo of my final year project under the topic Neural Network-Driven Augmented Reality for Gesture Control
 Here’s a detailed and informative `README.md` template that you can use for your GitHub project. This file will describe your project, its components, usage, and how to run each script.
 
-## Gesture Recognition Using LSTM (Long Short-Term Memory) Networks
+## There's 2 Proposed ML Methodologies
 
-This project aims to develop a gesture recognition system using LSTM networks. The project captures hand gesture data, performs data augmentation, preprocesses the data, trains an LSTM model, and evaluates its performance. The goal is to recognize dynamic gestures captured via a camera and classify them.
+### Method 1 Gesture Recognition Using CNN (Convolutional Neural Network) and LSTM (Long Short-Term Memory) Networks
+
+This approach aims to capture key points in a human hand to develop a gesture recognition system using HPE (Hand Pose Estimation) techniques employing a CNN (Convolutional Neural Network) and LSTM networks.
+
+### Method 2 Gesture Recognition Using CNN (Convolutional Neural Network) and Dense NN (Neural Network)
+
+This approach aims to capture weighted human hand velocity data using HPE (Hand Pose Estimation) techniques employing a CNN (Convolutional Neural Network) and use a Dense Neural Network for Classification of gestures. This Method prooved not only to be lighter but also more accurate and faster.
+
 
 ## Project Overview
 
-The project consists of several Python scripts that work together to:
+Method 1 consists of several Python scripts that work together to:
 
 1. **Collect gesture data** using a camera.
 2. **Augment** the collected data to increase the dataset's size and diversity.
@@ -19,9 +26,18 @@ The project consists of several Python scripts that work together to:
 
 The dataset is collected at 15 frames per sample, with 100 samples per gesture. Data augmentation multiplies the dataset by 25 times by applying different transformations (shifting, scaling, etc.).
 
+Method 2 consists of several Python scripts that work together to:
+
+1. **Collect gesture data** using a camera.
+2. **Evaluate the recorded data** and visualize the results.
+3. **Preprocess** the data for training, including normalizing and creating sequences.
+4. **Evaluate the Preprocessed data** and visualize the results.
+5. **Train an LSTM model** for gesture recognition.
+6. **Evaluate the model** and visualize the results, including a classification report and confusion matrix.
+
 ## Project Components
 
-The project contains the following scripts:
+The method 1 contains the following scripts:
 
 1. **`GestureCollection.py`**: 
     - Captures gesture data at 15 frames per sample.
@@ -52,7 +68,32 @@ The project contains the following scripts:
   
 8.  **`GestureRecognition.py`**
     - Apon running all prerequisite scripts, (1 through 7) a .h5 file will be created along side a csv file thats used for determining the gesture classes that the model can recognize
+
+
+The method 2 contains the following scripts:
+
+1. **`train.py`**: 
+    - Captures continious gesture data 1 second per sample.
+    - Collects 50 samples for each gesture.
+    - Includes a user-friendly guide to start and stop gesture collection.
+    - Data is saved as numpy arrays.
+
+2. **`Preprocessor.py`**: 
+    - Loads and preprocesses the collected and augmented gesture data.
+    - Normalizes the velocities and angles, creates sequences for gesture frames, encodes labels, and splits the data into training, validation, and test sets.
+
+3. **`Evaluation.py`** (Theres multiple evaluation files all with the purpose of testing): 
+    - Generates a classification report and confusion matrix.
+    - Visualizes the confusion matrix using a heatmap.
+
+4. **`NNModel.py`**: 
+    - Defines and trains the Dense Neural Network model for gesture recognition (Classification).
+    - Includes model architecture, loss function, optimizer, and training steps.
   
+5.  **`GUI.py`**
+    - Apon running all prerequisite scripts, (1 through 7) a .h5 file will be created along side a csv file thats used for determining the gesture classes that the model can recognize
+
+
 ## Installation
 
 ### Prerequisites
