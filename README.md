@@ -1,6 +1,4 @@
 # Neural-Network-Driven-Augmented-Reality-for-Gesture-Control
-Github Repo of my final year project under the topic Neural Network-Driven Augmented Reality for Gesture Control
-Here’s a detailed and informative `README.md` template that you can use for your GitHub project. This file will describe your project, its components, usage, and how to run each script.
 
 ## There's 2 Proposed ML Methodologies
 
@@ -100,7 +98,7 @@ The method 2 contains the following scripts:
 
 To run the scripts in this project, you need to have the following dependencies installed:
 
-- Python 3.6+ (Im using 3.9 for optimum use with open cv)
+- Python 3.6+ (Im using 3.9 for optimal useage with OpenCV and TensorFlow)
 - OpenCV
 - MediaPipe
 - NumPy
@@ -111,6 +109,8 @@ To run the scripts in this project, you need to have the following dependencies 
 - TensorFlow (for model training and evaluation)
 
 ## Usage
+
+### Method 1
 
 ### 1. Gesture Data Collection
 
@@ -175,6 +175,54 @@ This will generate:
 - A classification report.
 - A confusion matrix heatmap showing the performance of the model.
 
+
+
+### Method 2
+
+### 1. Gesture Data Collection
+
+Run **`train.py`** to collect gesture data. You will be prompted to enter a label for each gesture.
+
+- Collecting gestures will begin automaticaly.
+- You will be asked to perform each gesture.
+- The script will collect 50 samples per gesture and save them in a numpy array.
+
+
+### 2. Data Preprocessing
+
+Run **`DataPreprocessor.py`** to preprocess the collected data. This step normalizes and filters the data, creates sequences, and splits it into training, validation, and test sets.
+
+```bash
+python Preprocessor.py
+```
+
+This will preprocess the data and save the resulting arrays in `.npy` format, which will be used to train the model.
+
+### 3. Train the Dense NN Model
+
+Use **`NNModel.py`** to define, compile, and train the Dense NN model.
+
+```bash
+python NNModel.py
+```
+
+This script will train the model on the preprocessed data and save the trained model to a file (e.g., `gesture_lstm_model.h5`).
+
+### 4. Evaluation
+
+After training the model, use **`ModelEvaluation.py`** to load the trained model and evaluate its performance on the test set.
+
+```bash
+python Evaluation.py
+```
+
+This will generate:
+- A classification report.
+- A confusion matrix heatmap showing the performance of the model.
+
+
+
+
 ### Example Files
 
 - **Gesture Data (CSV)**: Data captured from **`GestureCollection.py`**.
@@ -182,9 +230,13 @@ This will generate:
 - **Preprocessed Data (Numpy `.npy` files)**: Data ready for training.
 - **Model**: The trained LSTM model (`gesture_lstm_model.h5`).
 - **Evaluation Results**: Classification report and confusion matrix heatmap.
+- **Collected Data (Numpy `.npy` files)**: Data captured from **`training_data.npy`**.
+- **Label Data (Numpy `.npy` files)**: Data captured from **`labels.npy`**.
+- **Preprocessed Data (Numpy `.npy` files)**: Data ready for training from **`processed_training_data_with_angles.npy`**.
 
 ## File Structure
 
+### ML Method 1
 ```
 .
 ├── GestureCollection.py              # Script to collect gesture data
@@ -197,6 +249,19 @@ This will generate:
 ├── augmented_gesture_data.csv        # Example of collected and augmented data
 ├── gesture_lstm_model.h5            # Trained LSTM model (after training)
 ├── label_encoder.npy                # Label encoder (for evaluation)
+└── confusion_matrix.png             # Confusion matrix heatmap (for evaluation)
+```
+
+### ML Method 2
+
+```
+.
+├── train.py                          # Script to collect gesture data
+├── Preprocessor.py                   # Script to preprocess the data
+├── NNModel.py                        # Script to define and train the LSTM model
+├── ModelEvaluation.py                # Script to evaluate the model
+├── GestureRecognition.py               # Script for that recognizes live gestures
+├── gesture_lstm_model.h5            # Trained LSTM model (after training)
 └── confusion_matrix.png             # Confusion matrix heatmap (for evaluation)
 ```
 
