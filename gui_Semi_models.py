@@ -6,7 +6,7 @@ import time
 from tensorflow import keras
 
 # Load the semi-supervised model (default to Mean Teacher; can switch to self_training_recoil_model.h5)
-MODEL_PATH = "self_training_recoil_model.h5"  # Or "self_training_recoil_model.h5"
+MODEL_PATH = "self_training_recoil_model.h5"  # Or "mean_teacher_recoil_model.h5"
 model = keras.models.load_model(MODEL_PATH)
 
 # Gesture labels (matches semi-supervised models)
