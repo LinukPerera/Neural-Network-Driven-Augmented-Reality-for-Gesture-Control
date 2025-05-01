@@ -6,7 +6,7 @@
 
 This approach aims to capture key points in a human hand to develop a gesture recognition system using HPE (Hand Pose Estimation) techniques employing a CNN (Convolutional Neural Network) and LSTM networks.
 
-## Method 2 Gesture Recognition Using CNN (Convolutional Neural Network) and Dense NN (Neural Network) and Semi-Supervised Learning (Pipeline of Models)
+### Method 2 Gesture Recognition Using CNN (Convolutional Neural Network) and Dense NN (Neural Network) and Semi-Supervised Learning (Pipeline of Models)
 
 This approach captures weighted human hand velocity data using Hand Pose Estimation (HPE) techniques with MediaPipe Hands, processes it through a Convolutional Neural Network (CNN) for feature extraction, and employs a Dense Neural Network for gesture classification. Additionally, semi-supervised learning methods (Self-Training and Mean Teacher) are used to leverage unlabeled data, improving model robustness and accuracy. This method is lightweight, accurate, and optimized for real-time gesture recognition, with specific handling for swapped "Swipe Left" (rightward motion) and "Swipe Right" (leftward motion) classifications and **recoil filtering**.
 
@@ -32,6 +32,8 @@ Method 2 consists of several Python scripts that work together to:
 4. **Evaluate the Preprocessed data** and visualize the results.
 5. **Train NN and Semi-Supervised models** for gesture recognition and recoil filtering.
 6. **Evaluate the model** and visualize the results, including a classification report and confusion matrix.
+
+The dataset is collected continuously (e.g., 1 seconds per sample, 50 samples per gesture), saved as NumPy arrays, and preprocessed to include features like absolute velocities, directions, and movement angles. Semi-supervised training uses unlabeled data to enhance performance, with recoil filtering to handle unintended movements.
 
 ## Project Components
 
@@ -91,12 +93,12 @@ The Method 2 pipeline includes the following scripts:
    - Outputs `preprocessed_unlabeled_data.npy`.
 
 5. **`npy_to_csv_for_semi.py`**:
-   - Converts NumPy arrays (e.g., `processed_training_data_with_angles.npy`) to CSV format for compatibility with semi-supervised training or analysis.
+   - Converts NumPy arrays (e.g., `processed_training_data_with_angles.npy`) to CSV format for compatibility with semi-supervised training and analysis.
 
 6. **`NNModel.py`**:
    - Defines and trains a Dense Neural Network for supervised gesture classification.
    - Uses features like absolute velocities, directions, and angles.
-   - Saves the trained model as `gesture_classification_model.h5`.
+   - Saves the trained model as `gesture_classification_model.h5` (This is needed to train both Semi-Supervised models).
 
 7. **`self_training_model_train.py`**:
    - Implements Self-Training, a semi-supervised method that uses pseudo-labels for high-confidence unlabeled data.
@@ -139,7 +141,7 @@ The Method 2 pipeline includes the following scripts:
 
 To run the scripts, install the following dependencies:
 
-- Python 3.6+ (3.9 recommended for compatibility with OpenCV and TensorFlow)
+- Python 3.6+ (3.9 recommended for compatibility with OpenCV and TensorFlow I have used Python 3.9.18)
 - OpenCV (`opencv-python`)
 - MediaPipe (`mediapipe`)
 - NumPy (`numpy`)
@@ -400,6 +402,7 @@ python gui_Semi_models.py    # Semi-supervised models
 After training and evaluating the model, you'll have access to:
 - **Classification report**: A detailed report of precision, recall, f1-score, and support for each gesture class.
 - **Confusion matrix heatmap**: A visual representation of the model’s confusion matrix, showing true vs predicted labels.
+- The LSTM Model prooved to Overfit however, the NN model had an accuracy of 84.78% when tested against an independent dataset and the self-learning Semi-Supervised model had an accuracy of 69.57% against an independent dataset, and the Student-Teacher Semi-Supervised model had an accuracy of 63.04% against an independent dataset. The mentioned results prooves and confirms the success of the suggested methodology to identify **Instinctive Gestures** leveraging Neural Networks and Machine Learning.
 
 ## Contributing
 
