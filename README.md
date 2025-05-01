@@ -1,4 +1,5 @@
-# Neural-Network-Driven-Augmented-Reality-for-Gesture-Control
+# Neural Network-Driven Augmented Reality for Gesture Control
+Research Project by Linuk Perera
 
 ## There's 2 Proposed ML Methodologies
 
