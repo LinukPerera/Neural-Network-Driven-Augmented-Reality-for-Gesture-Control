@@ -13,7 +13,7 @@ This approach captures weighted human hand velocity data using Hand Pose Estimat
 
 ## Project Overview
 
-Method 1 consists of several Python scripts that work together to:
+### Method 1 consists of several Python scripts that work together to:
 
 1. **Collect gesture data** using a camera.
 2. **Augment** the collected data to increase the dataset's size and diversity.
@@ -24,7 +24,7 @@ Method 1 consists of several Python scripts that work together to:
 
 The dataset is collected at 15 frames per sample, with 100 samples per gesture. Data augmentation multiplies the dataset by 25 times by applying different transformations (shifting, scaling, etc.).
 
-Method 2 consists of several Python scripts that work together to:
+### Method 2 consists of several Python scripts that work together to:
 
 1. **Collect gesture data** using a camera.
 2. **Evaluate the recorded data** and visualize the results.
@@ -37,7 +37,7 @@ The dataset is collected continuously (e.g., 1 seconds per sample, 50 samples pe
 
 ## Project Components
 
-The method 1 contains the following scripts:
+### The method 1 contains the following scripts:
 
 1. **`GestureCollection.py`**: 
     - Captures gesture data at 15 frames per sample.
@@ -70,7 +70,7 @@ The method 1 contains the following scripts:
     - Apon running all prerequisite scripts, (1 through 7) a .h5 file will be created along side a csv file thats used for determining the gesture classes that the model can recognize
 
 
-The Method 2 pipeline includes the following scripts:
+### The Method 2 pipeline includes the following scripts:
 
 1. **`data_collection_NN.py`**:
    - Captures continuous gesture data (1 second per sample, 50 samples per gesture) using MediaPipe Hands.
@@ -321,7 +321,7 @@ python gui_Semi_models.py    # Semi-supervised models
 
 ---
 
-### Example Files
+### Example Files (Method 1)
 
 - **Gesture Data (CSV)**: Data captured from **`GestureCollection.py`**.
 - **Augmented Data (CSV)**: Data after applying transformations from **`DataAugmentation.py`**.
@@ -334,7 +334,7 @@ python gui_Semi_models.py    # Semi-supervised models
 
 ---
 
-## 📁 Example Files
+## 📁 Example Files (Method 2)
 
 | Type               | Files                                                                 |
 |--------------------|-----------------------------------------------------------------------|
