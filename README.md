@@ -367,10 +367,10 @@ python DataSet_collect.py
 
 ## 2. Visualize Velocity Profiles
 
-Run **`Velocity_profiles.py`** to generate and visualize acceleration profiles.
+Run **`Acceleration_profiles.py`** to generate and visualize acceleration profiles.
 
 ```bash
-python Velocity_profiles.py
+python Acceleration_profiles.py
 ```
 
 - Outputs visualizations of velocity-time graphs for gesture and recoil analysis.
